@@ -10,6 +10,14 @@ from spaceowner.models import AdvertisementSpace
 from spaceowner.serializers import SpaceGetserializer
 from django.shortcuts import get_object_or_404
 from spaceowner.permissions import IsOwnerRole
+from advertiser.permissions import IsAdvertiserRole
+from django.db.models import Max
+from django.db.models import Count
+from django.db.models import Q
+
+from chat.authentication import CsrfExemptJWTAuthentication
+
+
 
 # Create your views here.
 class CreateChatroomView(APIView):
@@ -83,10 +91,102 @@ class OwnerInboxView(APIView):
                     },
                     "advertiser":{
                         "id":room.advertiser.id,
-                        "name":room.advertiser.username,
+                        "name":room.advertiser.name,
                     },
                     "last_message":last_msg.text if last_msg else "",
                     "last_time":last_msg.time_stamp if last_msg else room.created_at,
                 }
             )
         return Response(data)
+
+
+# ADVERTISER CHAT SETUP
+
+class  AdvertiserInboxView(APIView):
+    permission_classes=[IsAuthenticated,IsAdvertiserRole]
+
+    def get(self,request):
+        advertiser=request.user
+
+        rooms=(
+            ChatRoom.objects.filter(advertiser=advertiser)
+            .annotate(last_time=Max("message__time_stamp"))
+            .order_by('-last_time')
+        )
+
+        data=[]
+
+        for room in rooms:
+            last_message=(
+                Message.objects.filter(room=room).order_by("-time_stamp").first()
+            )
+
+            data.append({
+                "room_id":room.id,
+                "space":{
+                    "id":room.space.id,
+                    "title":room.space.title,
+                },
+                "owner":{
+                    "id":room.owner.id,
+                    "name":room.owner.name,
+                },
+                "last_message":last_message.text if last_message else "",
+                "last_time":last_message.time_stamp if last_message else None
+            })
+        
+        return Response(data)
+
+class MarkMessageRead(APIView):
+    authentication_classes=[CsrfExemptJWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, room_id):
+        user = request.user
+
+        room = get_object_or_404(ChatRoom, id=room_id)
+
+        # 🔐 Security: user must be part of the chat
+        if user != room.owner and user != room.advertiser:
+            return Response(
+                {"error": "You are not allowed to access this chat"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        print("USER:", request.user)
+        print("AUTH:", request.auth)
+
+
+        # Mark only incoming messages as read
+        Message.objects.filter(
+            room=room,
+            is_read=False
+        ).exclude(sender=user).update(is_read=True)
+
+        return Response(
+            {"status": "messages marked as read"},
+            status=status.HTTP_200_OK
+        )
+
+
+class InboxCount(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        notreadcount=Message.objects.filter(
+            is_read=False).exclude(
+                sender=request.user).filter(
+                    Q (room__owner=request.user)| Q(room__advertiser=request.user)).count()
+        
+        return Response({"count":notreadcount},status=status.HTTP_200_OK)
+
+class RoomMessageCount(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request,room_id):
+        count=Message.objects.filter(room_id=room_id,is_read=False).exclude(sender=request.user).count()
+        return Response({
+            "count":count,
+            'room_id':room_id
+        })
+
+

@@ -12,14 +12,24 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter,URLRouter
 from channels.auth import AuthMiddlewareStack
 import chat.routing
+from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adspora.settings')
 
+
 application = ProtocolTypeRouter({
-    "http":get_asgi_application(),
-    "websocket":AuthMiddlewareStack(
-        URLRouter(
-            chat.routing.websocket_urlpatterns
+    "http": get_asgi_application(),
+    "websocket": AllowedHostsOriginValidator(
+        OriginValidator(
+            AuthMiddlewareStack(
+                URLRouter(chat.routing.websocket_urlpatterns)
+            ),
+            [
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+            ],
         )
-    )
+    ),
 })
+

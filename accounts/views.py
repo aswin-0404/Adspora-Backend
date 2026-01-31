@@ -4,12 +4,15 @@ from rest_framework import status
 from .models import User
 from .serializers import RegisterSerializer,Loginserializer
 from rest_framework.views import APIView
-from rest_framework.authentication import authenticate
+from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
 class Registerview(APIView):
+    permission_classes=[AllowAny]
+
     def post(self,request):
         serializer=RegisterSerializer(data=request.data)
 
@@ -19,6 +22,8 @@ class Registerview(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class Loginview(APIView):
+    permission_classes=[AllowAny]
+
     def post(self,request):
         serializer=Loginserializer(data=request.data)
 
@@ -27,7 +32,7 @@ class Loginview(APIView):
             password=serializer.validated_data['password']
 
             user=authenticate(username=email,password=password)
-
+            print("this is the user",user)
             if  not user:
                 return Response({"message":"Invalid credentials"},status=status.HTTP_400_BAD_REQUEST)
 
