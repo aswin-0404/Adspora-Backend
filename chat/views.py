@@ -27,11 +27,13 @@ class CreateChatroomView(APIView):
 
         owner_id=request.data.get("owner_id")
         space_id=request.data.get("space_id")
+        text=request.data.get("text")
 
-        if not space_id or not owner_id:
-            return Response({
-                "error":"space_id and owner_id is required"
-            },status=status.HTTP_400_BAD_REQUEST)
+        if not all([space_id, owner_id, text]):
+            return Response(
+                {"error": "space_id, owner_id and text are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         advertiser=request.user
 
@@ -40,10 +42,37 @@ class CreateChatroomView(APIView):
 
         room,created=ChatRoom.objects.get_or_create(space=space,owner=owner,advertiser=advertiser)
 
+        Message.objects.create(
+            room=room,
+            sender=advertiser,
+            text=text
+        )
+
         return Response({
             "room_id":room.id,
             "created":created
         },status=status.HTTP_200_OK)
+    
+
+
+class ChatRoomExist(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        space_id=request.GET.get("space")
+        owner_id=request.GET.get("owner")
+
+        room=ChatRoom.objects.filter(
+            space_id=space_id,
+            owner_id=owner_id,
+            advertiser=request.user
+        ).first()
+
+        if room:
+            return Response({"exists":True,
+                             "room_id":room.id})
+        
+        return Response({"exits":False})
     
 class ChatMessageListView(APIView):
     permission_classes=[IsAuthenticated]

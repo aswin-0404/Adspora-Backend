@@ -23,4 +23,6 @@ urlpatterns = [
     path('api/',include('spaceowner.urls')),
     path('api/',include('advertiser.urls')),
     path('api/',include('chat.urls')),
+    path('api/',include('booking.urls')),
+    path('api/',include('payment.urls')),
 ]

@@ -11,3 +11,4 @@ class Wishlist(models.Model):
     
     class Meta:
         unique_together=('user','space')
+

@@ -19,6 +19,18 @@ class UserSpaceView(APIView):
         space=AdvertisementSpace.objects.filter(is_approved=True).prefetch_related('images')
         serializer=SpaceGetserializer(space,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+class SpaceDetailview(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request,space_id):
+        try:
+            space=AdvertisementSpace.objects.get(id=space_id)
+            serializer=SpaceGetserializer(space)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+    
+        except AdvertisementSpace.DoesNotExist:
+            return Response({"error":"space doesn't exist"})
 
 class Advertiserprofileview(APIView):
     permission_classes=[IsAdvertiserRole,IsAuthenticated]

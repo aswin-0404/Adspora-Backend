@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import UserSpaceView,Advertiserprofileview,WishlistHandleview,WishlistCount,GetWishlistView
+from .views import UserSpaceView,SpaceDetailview,Advertiserprofileview,WishlistHandleview,WishlistCount,GetWishlistView
 
 urlpatterns = [
     path('spaces/',UserSpaceView.as_view()),
+    path('spaces/<int:space_id>/',SpaceDetailview.as_view()),
     path('advertiser/profile/',Advertiserprofileview.as_view()),
 
     path('wishlist/<int:space_id>/',WishlistHandleview.as_view()),

@@ -41,3 +41,16 @@ class OwnerProfileview(APIView):
         owner=User.objects.get(id=request.user.id)
         serializer=AdvertiserProfileserializer(owner)
         return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+class OwnerSpaceDelete(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def delete(self,request,space_id):
+
+        try:
+            space=AdvertisementSpace.objects.get(id=space_id,owner=request.user)
+            space.delete()
+            return Response({"message":"Space removed successfully!"},status=status.HTTP_204_NO_CONTENT)
+        except AdvertisementSpace.DoesNotExist:
+            return Response({"error":"Space doesnt exist"},status=status.HTTP_400_BAD_REQUEST)
