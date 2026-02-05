@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import SpaceImages,AdvertisementSpace
 from accounts.models import User
-
+from booking.models import Booking
 
 # SPACE ADD SERIALIZER
 
@@ -44,6 +44,12 @@ class SpaceGetserializer(serializers.ModelSerializer):
     class Meta:
         model=AdvertisementSpace
         fields=['id','title','space_type','location','size','price','description','is_approved','images','created_at','booked','owner']
+
+
+class UpdateStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Booking
+        fields=['status']
 
 
 

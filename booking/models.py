@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User
 from spaceowner.models import AdvertisementSpace
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -9,7 +10,7 @@ class Booking(models.Model):
     space=models.ForeignKey(AdvertisementSpace,on_delete=models.CASCADE)
     months=models.IntegerField()
     amount=models.DecimalField(max_digits=10,decimal_places=2)
-    proof=models.ImageField(upload_to='payments/')
+    proof=CloudinaryField('image')
     status=models.CharField(max_length=50,choices=[
         ("PENDING","PENDING"),
         ("CONFIRMED","CONFIRMED"),

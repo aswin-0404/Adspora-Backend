@@ -8,6 +8,11 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_decode
 # Create your views here.
 
 class Registerview(APIView):
@@ -55,3 +60,53 @@ class Loginview(APIView):
                              }                       
                              },status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# PASSWORD RESET
+
+class ForgotPassword(APIView):
+    permission_classes=[AllowAny]
+
+    def post(self,request):
+        email=request.data.get("email")
+
+        try:
+            user=User.objects.get(email=email)
+
+            uid=urlsafe_base64_encode(force_bytes(user.pk))
+            token=default_token_generator.make_token(user)
+
+            reset_link=f"http://localhost:5173/reset-password/{uid}/{token}/"
+
+            send_mail(
+                "password Reset",
+                f"click the link to reset password:\n{reset_link}",
+                "adspora@gmail.com",
+                [email]
+            )
+            return Response({"message":"Reset link sent"})
+        
+        except User.DoesNotExist:
+            return Response({"error":"User not Found"},status=status.HTTP_400_BAD_REQUEST)
+        
+class ResetPassword(APIView):
+    permission_classes=[AllowAny]
+
+    def post(self,request,uid,token):
+        password=request.data.get("password")
+
+        try:
+            user_id=urlsafe_base64_decode(uid).decode()
+            user=User.objects.get(id=user_id)
+
+            if default_token_generator.check_token(user,token):
+                user.set_password(password)
+                user.save()
+
+                return Response({"message":"password Reset successful"})
+            
+            return Response({"error":"Invalid token"},status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception:
+            return Response({"error","invalid request"},status=status.HTTP_400_BAD_REQUEST)
