@@ -2,11 +2,11 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
 from .models import User
-from .serializers import RegisterSerializer,Loginserializer
+from .serializers import RegisterSerializer,Loginserializer,ProfileEditSerializer
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
@@ -37,7 +37,6 @@ class Loginview(APIView):
             password=serializer.validated_data['password']
 
             user=authenticate(username=email,password=password)
-            print("this is the user",user)
             if  not user:
                 return Response({"message":"Invalid credentials"},status=status.HTTP_400_BAD_REQUEST)
 
@@ -110,3 +109,20 @@ class ResetPassword(APIView):
         
         except Exception:
             return Response({"error","invalid request"},status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ProfileEditView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def patch(self,request):
+        user=request.user
+        serilizer=ProfileEditSerializer(user,data=request.data,partial=True)
+
+        if serilizer.is_valid():
+            serilizer.save()
+            return Response({"message":"profile Updated Successfully"})
+        
+        return Response(serilizer.errors)
+
+
+        

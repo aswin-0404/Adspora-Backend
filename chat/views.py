@@ -62,17 +62,19 @@ class ChatRoomExist(APIView):
         space_id=request.GET.get("space")
         owner_id=request.GET.get("owner")
 
-        room=ChatRoom.objects.filter(
+        if not space_id or not owner_id:
+            return Response(
+                {"error":"Missing parameters"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        room,created=ChatRoom.objects.get_or_create(
             space_id=space_id,
             owner_id=owner_id,
             advertiser=request.user
-        ).first()
-
-        if room:
-            return Response({"exists":True,
-                             "room_id":room.id})
+        )
         
-        return Response({"exits":False})
+        return Response({"room_id":room.id})
     
 class ChatMessageListView(APIView):
     permission_classes=[IsAuthenticated]

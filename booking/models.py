@@ -6,8 +6,8 @@ from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class Booking(models.Model):
-    advertiser=models.ForeignKey(User,on_delete=models.CASCADE)
-    space=models.ForeignKey(AdvertisementSpace,on_delete=models.CASCADE)
+    advertiser=models.ForeignKey(User,on_delete=models.CASCADE,related_name='bookings')
+    space=models.ForeignKey(AdvertisementSpace,on_delete=models.CASCADE,related_name='bookings')
     months=models.IntegerField()
     amount=models.DecimalField(max_digits=10,decimal_places=2)
     proof=CloudinaryField('image')

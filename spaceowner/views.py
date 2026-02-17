@@ -33,7 +33,7 @@ class GetspaceView(APIView):
     permission_classes=[IsOwnerRole,IsAuthenticated]
 
     def get(self,request):
-        spaces=AdvertisementSpace.objects.filter(owner=request.user).prefetch_related('images')
+        spaces=AdvertisementSpace.objects.filter(owner=request.user).prefetch_related('images','bookings')
         serializer=SpaceGetserializer(spaces,many=True)
         return  Response(serializer.data,status=status.HTTP_200_OK)
     

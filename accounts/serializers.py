@@ -44,3 +44,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 class Loginserializer(serializers.Serializer):
     email=serializers.EmailField()
     password=serializers.CharField()
+
+class ProfileEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['name','email','email','adharnumber']

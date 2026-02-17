@@ -9,7 +9,7 @@ urlpatterns = [
     path('chat/mark-read/<int:room_id>/',csrf_exempt(MarkMessageRead.as_view())),
     path('Notread/count/',InboxCount.as_view()),
     path('message/count/<int:room_id>/',RoomMessageCount.as_view()),
-    path('chat/room-exits/',ChatRoomExist.as_view()),
+    path('chat/room-exists/',ChatRoomExist.as_view()),
 
     # Owner URLS
     path('chat/owner/inbox/',OwnerInboxView.as_view()),

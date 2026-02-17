@@ -10,6 +10,7 @@ from .serializers import AdvertiserProfileserializer
 from accounts.models import User
 from .models import Wishlist
 from .serializers import Wishlistserializer
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 class UserSpaceView(APIView):
@@ -75,3 +76,46 @@ class GetWishlistView(APIView):
         space=Wishlist.objects.filter(user=request.user)
         serializer=Wishlistserializer(space,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+
+# AI chat searching
+
+from rag.rag_service import rag_search
+import os
+from rag.gemini_services import generate_ai_replay
+
+
+class AISearchView(APIView):
+    permission_classes=[AllowAny]
+
+    def post(self,request):
+        query=request.data.get("query")
+
+        spaces=rag_search(query)
+
+        ai_replay=generate_ai_replay(query,spaces)
+
+        return Response({
+            "replay":ai_replay,
+            "results":[
+                {
+                    "id":s.id,
+                    "title":s.title,
+                    "location":s.location,
+                    "price":s.price,
+                    "space_type":s.space_type,
+                    "size":s.size,
+                    "owner":{
+                        "id":s.owner.id
+                    },
+                    "images":[
+                        {
+                        "id":img.id,
+                        "image":img.image.url
+                        }
+                        for img in s.images.all()
+                    ]
+                }
+                for s in spaces
+            ]
+        })
