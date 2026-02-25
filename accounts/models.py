@@ -37,7 +37,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     role=models.CharField(max_length=10,choices=ROLE_CHOICES)
     adharnumber=models.CharField(max_length=50,null=True)
 
-    is_suspend=models.BooleanField(default=False)
+    is_suspend=models.BooleanField(default=True)
     is_staff=models.BooleanField(default=False)
     
     created_at=models.DateTimeField(auto_now_add=True)
