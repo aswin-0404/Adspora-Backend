@@ -11,7 +11,7 @@ from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.core.mail import send_mail
+# from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_decode
 # Create your views here.
 
@@ -24,13 +24,13 @@ class Registerview(APIView):
         if serializer.is_valid():
             user=serializer.save()
 
-            send_mail(
-                subject=f'welcome {user.name}!',
-                message=f"Your Account at Adspora created successfully.You can access after Approvel!",
-                from_email='adspora@gmail.com',
-                recipient_list=[user.email],
-                fail_silently=True
-            )
+            # send_mail(
+            #     subject=f'welcome {user.name}!',
+            #     message=f"Your Account at Adspora created successfully.You can access after Approvel!",
+            #     from_email='adspora@gmail.com',
+            #     recipient_list=[user.email],
+            #     fail_silently=True
+            # )
             return Response({"message":"Registration successfull"},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
