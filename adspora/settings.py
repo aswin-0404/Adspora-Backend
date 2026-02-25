@@ -137,6 +137,10 @@ CORS_ALLOWED_ORIGINS=[
     "https://adspora-frondend.vercel.app",
 ]
 
+CORS_ALLOW_HEADERS = ["*"]
+
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+
 CORS_ALLOW_CREDENTIALS=True
 
 ROOT_URLCONF = 'adspora.urls'
