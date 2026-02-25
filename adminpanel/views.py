@@ -8,11 +8,10 @@ from spaceowner.models import AdvertisementSpace
 from booking.models import Booking
 from django.db.models import Count,Sum
 from django.db.models.functions import ExtractMonth
-from .serializers import TopContributerSerializer,AllUserGetSerializer,AllSpaceGetSerializer,OwnerDetailsSerializer
+from .serializers import TopContributerSerializer,AllUserGetSerializer,AllSpaceGetSerializer,OwnerDetailsSerializer,AdminRegisterSerializer
 from booking.serializers import BookingDetailsSerializer
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from accounts.serializers import RegisterSerializer
 from django.core.mail import send_mail
 
 
@@ -77,7 +76,7 @@ class AddUSerView(APIView):
     permission_classes=[IsAdminUser]
 
     def post(self,request):
-        serializer=RegisterSerializer(data=request.data)
+        serializer=AdminRegisterSerializer(data=request.data)
 
         if serializer.is_valid():
             user=serializer.save()
