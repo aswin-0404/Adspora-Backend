@@ -81,13 +81,13 @@ class AddUSerView(APIView):
         if serializer.is_valid():
             user=serializer.save()
 
-            send_mail(
-                subject=f"Account Created at Adspora",
-                message=f"{user.name} Admin Got created a account for you.Now you can utilise the services of adspora.Thankyou!",
-                from_email="adspora@gmail.com",
-                recipient_list=[user.email],
-                fail_silently=False
-            )
+            # send_mail(
+            #     subject=f"Account Created at Adspora",
+            #     message=f"{user.name} Admin Got created a account for you.Now you can utilise the services of adspora.Thankyou!",
+            #     from_email="adspora@gmail.com",
+            #     recipient_list=[user.email],
+            #     fail_silently=False
+            # )
             return Response({"message":"user created succefully"},status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors)
@@ -110,14 +110,14 @@ class DeleteUser(APIView):
             user= User.objects.get(pk=pk)
             user.delete()
 
-            send_mail(
-                subject=f"Account Deleted",
-                message=f"Your account is Permenetly deleted by the admin!",
-                from_email="adspora@gmail.com",
-                recipient_list=[user.email],
-                fail_silently=False
+            # send_mail(
+            #     subject=f"Account Deleted",
+            #     message=f"Your account is Permenetly deleted by the admin!",
+            #     from_email="adspora@gmail.com",
+            #     recipient_list=[user.email],
+            #     fail_silently=False
                 
-            )
+            # )
             return Response({"message":"user deleted successfully"},status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"message":"user not exist"},status=status.HTTP_400_BAD_REQUEST)
@@ -133,19 +133,19 @@ class StatusToggle(APIView):
             user.is_suspend= not user.is_suspend
             user.save()
 
-            user_status=None
-            if user.is_suspend==True:
-                user_status="Suspended"
-            elif user.is_suspend==False:
-                user_status="Access Aproved"
+            # user_status=None
+            # if user.is_suspend==True:
+            #     user_status="Suspended"
+            # elif user.is_suspend==False:
+            #     user_status="Access Aproved"
 
-            send_mail(
-                subject=f"Access changed by Admin",
-                message=f"your Account {user_status} by the admin!",
-                from_email="adspora@gmail.com",
-                recipient_list=[user.email],
-                fail_silently=False
-            )
+            # send_mail(
+            #     subject=f"Access changed by Admin",
+            #     message=f"your Account {user_status} by the admin!",
+            #     from_email="adspora@gmail.com",
+            #     recipient_list=[user.email],
+            #     fail_silently=False
+            # )
             return Response({"message":"user status updated",
                              "status":user.is_suspend},status=status.HTTP_200_OK)
         
@@ -172,14 +172,14 @@ class DeleteSpaceview(APIView):
             space=AdvertisementSpace.objects.get(pk=pk)
             space.delete()
 
-            send_mail(
-                subject=f"Space Deleted",
-                message=f"Your Space got  Permenetly deleted by the admin!",
-                from_email="adspora@gmail.com",
-                recipient_list=[space.owner.email],
-                fail_silently=False
+            # send_mail(
+            #     subject=f"Space Deleted",
+            #     message=f"Your Space got  Permenetly deleted by the admin!",
+            #     from_email="adspora@gmail.com",
+            #     recipient_list=[space.owner.email],
+            #     fail_silently=False
                 
-            )
+            # )
             return Response({"message":"space deleted successfully"},status=status.HTTP_200_OK)
         except AdvertisementSpace.DoesNotExist:
             return Response({"message":"space not found"},status=status.HTTP_400_BAD_REQUEST)
@@ -195,19 +195,19 @@ class ToggleStatusView(APIView):
             space.is_approved = not space.is_approved
             space.save()
 
-            space_status=None
-            if space.is_approved==True:
-                space_status="Listing Approved"
-            elif space.is_approved==False:
-                space_status="Listing denied"
+            # space_status=None
+            # if space.is_approved==True:
+            #     space_status="Listing Approved"
+            # elif space.is_approved==False:
+            #     space_status="Listing denied"
 
-            send_mail(
-                subject=f"Listing changed by Admin",
-                message=f"your Space {space_status} by the admin!",
-                from_email="adspora@gmail.com",
-                recipient_list=[space.owner.email],
-                fail_silently=False
-            )
+            # send_mail(
+            #     subject=f"Listing changed by Admin",
+            #     message=f"your Space {space_status} by the admin!",
+            #     from_email="adspora@gmail.com",
+            #     recipient_list=[space.owner.email],
+            #     fail_silently=False
+            # )
             return Response({"message":"Space Status got changed",
                              "is_approved":space.is_approved},status=status.HTTP_200_OK)
         
