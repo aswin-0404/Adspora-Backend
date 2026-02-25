@@ -12,7 +12,7 @@ from .serializers import TopContributerSerializer,AllUserGetSerializer,AllSpaceG
 from booking.serializers import BookingDetailsSerializer
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.core.mail import send_mail
+# from django.core.mail import send_mail
 
 
 
