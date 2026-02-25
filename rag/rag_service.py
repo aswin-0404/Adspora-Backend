@@ -2,8 +2,27 @@ from .embedding import generate_embedding
 from .vector_store import add_vector,search_vector
 from spaceowner.models import AdvertisementSpace
 import re
+from .vector_store import reset_index
+
+INDEX_READY = False
+INDEXING = False
+
+def ensure_index():
+    global INDEX_READY, INDEXING
+
+    if INDEX_READY or INDEXING:
+        return
+
+    INDEXING = True
+    index_all_spaces()
+    INDEX_READY = True
+    INDEXING = False
+
 
 def index_all_spaces():
+
+    reset_index()
+
     spaces=AdvertisementSpace.objects.all()
 
     for space in spaces:
@@ -58,6 +77,8 @@ def extract_price_filter(query):
     return None
 
 def rag_search(query):
+
+    ensure_index()
     
     location_filter=extract_location_filter(query)
     price_filter=extract_price_filter(query)

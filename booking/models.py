@@ -10,6 +10,7 @@ class Booking(models.Model):
     space=models.ForeignKey(AdvertisementSpace,on_delete=models.CASCADE,related_name='bookings')
     months=models.IntegerField()
     amount=models.DecimalField(max_digits=10,decimal_places=2)
+    platform_fee=models.DecimalField(max_digits=10,decimal_places=2,default=2000.00)
     proof=CloudinaryField('image')
     status=models.CharField(max_length=50,choices=[
         ("PENDING","PENDING"),

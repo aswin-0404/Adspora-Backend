@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'chat.apps.ChatConfig',
     'booking',
     'payment',
+    'adminpanel',
 
     'corsheaders',
     
@@ -125,21 +126,20 @@ MIDDLEWARE = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
 
-
-CSRF_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
 
 
 CORS_ALLOWED_ORIGINS=[
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
 
-CORS_ALLOWED_CREDENTIALS=True
+CORS_ALLOW_CREDENTIALS=True
 
 ROOT_URLCONF = 'adspora.urls'
 
@@ -165,7 +165,7 @@ REST_FRAMEWORK = {
         "chat.authentication.CsrfExemptJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ),
 }
 

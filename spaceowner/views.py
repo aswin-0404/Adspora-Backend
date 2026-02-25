@@ -24,7 +24,7 @@ class SpaceaddView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
-            {"message": "Space added successfully"},
+            {"message": "Space added successfully"},    
             status=status.HTTP_201_CREATED
             )
 

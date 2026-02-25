@@ -22,7 +22,15 @@ class Registerview(APIView):
         serializer=RegisterSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            user=serializer.save()
+
+            send_mail(
+                subject=f'welcome {user.name}!',
+                message=f"Your Account at Adspora created successfully.You can access after Approvel!",
+                from_email='adspora@gmail.com',
+                recipient_list=[user.email],
+                fail_silently=False
+            )
             return Response({"message":"Registration successfull"},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 

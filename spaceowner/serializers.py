@@ -13,7 +13,7 @@ class AdvertisementSpaceAddSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model=AdvertisementSpace
-        fields=['title','space_type','location','size','price','description','images']
+        fields=['title','space_type','location','size','price','description','images','is_approved']
 
     def create(self, validated_data):
         image=validated_data.pop('images')
