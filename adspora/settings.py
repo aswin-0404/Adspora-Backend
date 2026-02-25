@@ -27,8 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -66,12 +64,9 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION='adspora.asgi.application'
 
-CHANNEL_LAYERS={
-    "default":{
-        "BACKEND":"channels_redis.core.RedisChannelLayer",
-        "CONFIG":{
-            "hosts":[("127.0.0.1",6379)],
-        },
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 
@@ -113,6 +108,7 @@ EMAIL_HOST_PASSWORD=os.getenv("EMAIL_HOST_PASSWORD")
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -128,6 +124,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5174",
     "http://127.0.0.1:5174",
+    "https://adspora-frondend.vercel.app",
 ]
 
 
@@ -137,6 +134,7 @@ CORS_ALLOWED_ORIGINS=[
     "http://127.0.0.1:5173",
     "http://localhost:5174",
     "http://127.0.0.1:5174",
+    "https://adspora-frondend.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS=True
@@ -184,16 +182,7 @@ SIMPLE_JWT={
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config("DB_NAME"),
-        'USER':config("DB_USER"),
-        'PASSWORD':config("DB_PASSWORD"),
-        'HOST':config("DB_HOST", default="localhost"),
-        "PORT":config("DB_PORT",default="5432")
-    }
-}
+
 
 
 
@@ -234,3 +223,22 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
+
+# DEPLOYMENT SETTINGS
+
+
+import dj_database_url
+
+DEBUG = config("DEBUG", default=False, cast=bool)
+
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config("DATABASE_URL")
+    )
+}
+
+STATIC_ROOT=os.path.join(BASE_DIR,'staticfiles')
