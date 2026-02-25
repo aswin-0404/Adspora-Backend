@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserSpaceView,SpaceDetailview,Advertiserprofileview,WishlistHandleview,WishlistCount,GetWishlistView,AISearchView
+from .views import UserSpaceView,SpaceDetailview,Advertiserprofileview,WishlistHandleview,WishlistCount,GetWishlistView
 
 urlpatterns = [
     path('spaces/',UserSpaceView.as_view()),
