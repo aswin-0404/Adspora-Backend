@@ -10,5 +10,5 @@ urlpatterns = [
     path('wishlist/count/',WishlistCount.as_view()),
     path('wishlist/',GetWishlistView.as_view()),
 
-    path('ai-search/',AISearchView.as_view()),
+#     path('ai-search/',AISearchView.as_view()),
 ]
