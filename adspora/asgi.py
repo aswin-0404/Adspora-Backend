@@ -1,25 +1,22 @@
 """
 ASGI config for adspora project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/asgi/
 """
 
 import os
-from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter,URLRouter
-from channels.auth import AuthMiddlewareStack
-import chat.routing
-from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
-
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adspora.settings')
 
+from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
+
+django_asgi_app = get_asgi_application()
+
+import chat.routing
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
+    "http": django_asgi_app,
     "websocket": AllowedHostsOriginValidator(
         OriginValidator(
             AuthMiddlewareStack(
@@ -28,8 +25,8 @@ application = ProtocolTypeRouter({
             [
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
+                "https://your-frontend.onrender.com",
             ],
         )
     ),
 })
-
