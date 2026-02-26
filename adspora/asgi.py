@@ -18,15 +18,8 @@ import chat.routing
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
     "websocket": AllowedHostsOriginValidator(
-        OriginValidator(
-            AuthMiddlewareStack(
-                URLRouter(chat.routing.websocket_urlpatterns)
-            ),
-            [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-                "https://your-frontend.onrender.com",
-            ],
+        AuthMiddlewareStack(
+            URLRouter(chat.routing.websocket_urlpatterns)
         )
     ),
 })
