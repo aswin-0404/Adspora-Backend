@@ -238,8 +238,11 @@ import dj_database_url
 # DEBUG = config("DEBUG", default=False, cast=bool)
 DEBUG=True
 
-ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = [
+    "adspora-backend.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 import dj_database_url
 
 DATABASES = {
